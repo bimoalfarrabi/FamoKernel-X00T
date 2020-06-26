@@ -1,0 +1,40 @@
+#!/bin/bash
+
+kernel_dir="${PWD}"
+CCACHE=$(command -v ccache)
+HOME=/home/syarifibnu
+objdir="${kernel_dir}/out"
+builddir="${kernel_dir}/build"
+ZIMAGE=$kernel_dir/out/arch/arm64/boot/Image.gz-dtb
+export CONFIG_FILE="FamoX00T_defconfig"
+export ARCH="arm64"
+export KBUILD_BUILD_HOST="FamoKernel"
+export KBUILD_BUILD_USER="SyarifIbnu"
+
+# Colors
+NC='\033[0m'
+RED='\033[0;31m'
+LRD='\033[1;31m'
+LGR='\033[1;32m'
+
+make_defconfig()
+{
+	# Needed to make sure we get dtb built and added to kernel image properly
+     START=$(date +"%s")
+	echo -e ${LGR} "########### Generating Defconfig ############${NC}"
+    make -s ARCH=${ARCH} O=${objdir} ${CONFIG_FILE} -j$(nproc --all)
+}
+compile()
+{
+	cd ${kernel_dir}
+	echo -e ${LGR} "######### Compiling kernel #########${NC}"
+	make -j$(nproc --all) O=out \
+                      ARCH=${ARCH} \
+              CROSS_COMPILE="$HOME/android/toolchain/4.9/arm64/bin/aarch64-linux-android-" \
+			  CROSS_COMPILE_ARM32="$HOME/android/toolchain/4.9/arm32/bin/arm-linux-androideabi-"
+
+}
+
+make_defconfig
+compile
+cd ${kernel_dir}
