@@ -56,8 +56,3 @@
 	};
 };
 
-/* GPU overrides */
-&msm_gpu {
-		/* Update GPU chip ID*/
-		qcom,chipid = <0x06010600>;
-};
