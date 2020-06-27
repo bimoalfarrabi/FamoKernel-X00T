@@ -950,13 +950,6 @@ static int set_sdp_current(struct smb_charger *chg, int icl_ua)
 	u8 icl_options;
 	const struct apsd_result *apsd_result = smblib_get_apsd_result(chg);
 
-#ifdef CONFIG_FORCE_FAST_CHARGE
-	if (force_fast_charge > 0 && icl_ua == USBIN_500MA)
-	{
-		icl_ua = USBIN_900MA;
-	}
-#endif
-
 	/* power source is SDP */
 	switch (icl_ua) {
 	case USBIN_100MA:
@@ -2665,11 +2658,11 @@ int smblib_get_prop_die_health(struct smb_charger *chg,
 #define SDP_CURRENT_UA			500000
 #define CDP_CURRENT_UA			1500000
 #ifdef CONFIG_MACH_ASUS_X00T
-#define DCP_CURRENT_UA			2000000
+#define DCP_CURRENT_UA			1500000
 #else
 #define DCP_CURRENT_UA			2500000
 #endif
-#define HVDCP_CURRENT_UA		3000000
+#define HVDCP_CURRENT_UA		4000000
 #define TYPEC_DEFAULT_CURRENT_UA	900000
 #define TYPEC_MEDIUM_CURRENT_UA		1500000
 #define TYPEC_HIGH_CURRENT_UA		3000000

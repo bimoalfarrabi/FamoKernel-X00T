@@ -340,8 +340,6 @@ static enum power_supply_property smb138x_batt_props[] = {
 	POWER_SUPPLY_PROP_PRESENT,
 	POWER_SUPPLY_PROP_CHARGE_TYPE,
 	POWER_SUPPLY_PROP_CAPACITY,
-	POWER_SUPPLY_PROP_CHARGER_TEMP,
-	POWER_SUPPLY_PROP_CHARGER_TEMP_MAX,
 	POWER_SUPPLY_PROP_SET_SHIP_MODE,
 };
 
@@ -371,12 +369,6 @@ static int smb138x_batt_get_prop(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_CAPACITY:
 		rc = smblib_get_prop_batt_capacity(chg, val);
-		break;
-	case POWER_SUPPLY_PROP_CHARGER_TEMP:
-		rc = smb138x_get_prop_charger_temp(chip, val);
-		break;
-	case POWER_SUPPLY_PROP_CHARGER_TEMP_MAX:
-		rc = smblib_get_prop_charger_temp_max(chg, val);
 		break;
 	case POWER_SUPPLY_PROP_SET_SHIP_MODE:
 		/* Not in ship mode as long as device is active */
@@ -532,8 +524,6 @@ static enum power_supply_property smb138x_parallel_props[] = {
 	POWER_SUPPLY_PROP_VOLTAGE_MAX,
 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
 	POWER_SUPPLY_PROP_CURRENT_NOW,
-	POWER_SUPPLY_PROP_CHARGER_TEMP,
-	POWER_SUPPLY_PROP_CHARGER_TEMP_MAX,
 	POWER_SUPPLY_PROP_MODEL_NAME,
 	POWER_SUPPLY_PROP_PARALLEL_MODE,
 	POWER_SUPPLY_PROP_CONNECTOR_HEALTH,
@@ -592,12 +582,6 @@ static int smb138x_parallel_get_prop(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_CURRENT_NOW:
 		rc = smblib_get_prop_slave_current_now(chg, val);
-		break;
-	case POWER_SUPPLY_PROP_CHARGER_TEMP:
-		rc = smb138x_get_prop_charger_temp(chip, val);
-		break;
-	case POWER_SUPPLY_PROP_CHARGER_TEMP_MAX:
-		rc = smblib_get_prop_charger_temp_max(chg, val);
 		break;
 	case POWER_SUPPLY_PROP_MODEL_NAME:
 		val->strval = "smb138x";

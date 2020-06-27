@@ -950,8 +950,6 @@ static enum power_supply_property smb2_batt_props[] = {
 	POWER_SUPPLY_PROP_CHARGE_TYPE,
 	POWER_SUPPLY_PROP_CAPACITY,
 	POWER_SUPPLY_PROP_SYSTEM_TEMP_LEVEL,
-	POWER_SUPPLY_PROP_CHARGER_TEMP,
-	POWER_SUPPLY_PROP_CHARGER_TEMP_MAX,
 	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMITED,
 	POWER_SUPPLY_PROP_VOLTAGE_NOW,
 	POWER_SUPPLY_PROP_VOLTAGE_MAX,
@@ -1012,19 +1010,6 @@ static int smb2_batt_get_prop(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_SYSTEM_TEMP_LEVEL:
 		rc = smblib_get_prop_system_temp_level(chg, val);
-		break;
-	case POWER_SUPPLY_PROP_CHARGER_TEMP:
-		/* do not query RRADC if charger is not present */
-		rc = smblib_get_prop_usb_present(chg, &pval);
-		if (rc < 0)
-			pr_err("Couldn't get usb present rc=%d\n", rc);
-
-		rc = -ENODATA;
-		if (pval.intval)
-			rc = smblib_get_prop_charger_temp(chg, val);
-		break;
-	case POWER_SUPPLY_PROP_CHARGER_TEMP_MAX:
-		rc = smblib_get_prop_charger_temp_max(chg, val);
 		break;
 	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMITED:
 		rc = smblib_get_prop_input_current_limited(chg, val);

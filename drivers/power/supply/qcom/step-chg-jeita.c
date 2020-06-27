@@ -115,18 +115,22 @@ static struct step_chg_cfg step_chg_config = {
  * range data must be in increasing ranges and shouldn't overlap.
  * Gaps are okay
  */
+#ifdef CONFIG_MACH_ASUS_X00T
 static struct jeita_fcc_cfg jeita_fcc_config = {
 	.psy_prop	= POWER_SUPPLY_PROP_TEMP,
 	.prop_name	= "BATT_TEMP",
 	.hysteresis	= 10, /* 1degC hysteresis */
 	.fcc_cfg	= {
 		/* TEMP_LOW	TEMP_HIGH	FCC */
-		{0,		100,		600000},
-		{101,		200,		2000000},
-		{201,		450,		3000000},
-		{451,		550,		600000},
+		{0,			50,			 400000},
+		{51,		150,		1200000},
+		{151,		430,		2500000},
+		{431,		450,		2000000},
+		{451,		470,		1500000},
+		{471,		600,		 800000},
 	},
 };
+#endif
 
 static struct jeita_fv_cfg jeita_fv_config = {
 	.psy_prop	= POWER_SUPPLY_PROP_TEMP,
