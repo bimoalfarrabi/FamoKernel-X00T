@@ -3370,8 +3370,8 @@ static int fg_get_time_to_full_locked(struct fg_chip *chip, int *val)
 	vbatt_avg /= MILLI_UNIT;
 
 #ifdef CONFIG_MACH_ASUS_X00T
-	if (ibatt_avg > 2500)
-		ibatt_avg = 2500; /* force max charging current limitations */
+	if (ibatt_avg > 3000)
+		ibatt_avg = 3000; /* force max charging current limitations */
 #else
 	if (ibatt_avg > 3000)
 		ibatt_avg = 3000; /* force max charging current limitations */
