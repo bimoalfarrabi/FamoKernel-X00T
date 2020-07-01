@@ -64,6 +64,32 @@
 #endif
 
 #ifdef CONFIG_MACH_ASUS_X00T
+
+/*
+charge_mode	:	SMBCHG_FAST_CHG_CURRENT_VALUE
+0			:	2000MA
+1			:	2050MA
+2			:	2500MA
+3			:	2850MA
+4			:	3000MA
+other		:	2000MA
+*/
+static unsigned int charge_mode = 3;
+module_param(charge_mode, uint, S_IWUSR | S_IRUGO);
+
+/*
+adapter_ceeling_current	:	ICL VALUE
+0						:	2000MA
+1						:	2050MA
+2						:	2500MA
+3						:	2850MA
+4						:	3000MA
+5						:	1000MA
+other					:	2000MA
+*/
+static unsigned int adapter_ceeling_current = 4;
+module_param(adapter_ceeling_current, uint, S_IWUSR | S_IRUGO);
+
 extern struct smb_charger *smbchg_dev;
 extern struct timespec last_jeita_time;
 static struct alarm bat_alarm;
@@ -3419,6 +3445,8 @@ void asus_batt_RTC_work(struct work_struct *dat)
 #define ICL_1500mA	0x3C
 #define ICL_1900mA	0x4C
 #define ICL_2000mA	0x50
+#define ICL_2050mA	0x52
+#define ICL_2500mA	0x64
 #define ICL_2850mA	0x72
 #define ICL_3000mA	0x78
 #define ASUS_MONITOR_CYCLE	60000
@@ -3450,6 +3478,8 @@ void smblib_asus_monitor_start(struct smb_charger *chg, int time)
 #define SMBCHG_FAST_CHG_CURRENT_VALUE_1500MA	0x3C
 #define SMBCHG_FAST_CHG_CURRENT_VALUE_2000MA	0x50
 #define SMBCHG_FAST_CHG_CURRENT_VALUE_2050MA	0x52
+#define SMBCHG_FAST_CHG_CURRENT_VALUE_2500MA	0x64
+#define SMBCHG_FAST_CHG_CURRENT_VALUE_2850MA	0x72
 #define SMBCHG_FAST_CHG_CURRENT_VALUE_3000MA	0x78
 
 enum JEITA_state {
@@ -3712,13 +3742,30 @@ void jeita_rule(void)
 		FV_CFG_reg_value = SMBCHG_FLOAT_VOLTAGE_VALUE_4P350;
 
 		/* reg=1061 */
-		FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_1400MA;
-
+				switch (charge_mode) {
+				case 0:
+					FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2000MA;
+					break;
+				case 1:
+					FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2050MA;
+					break;
+				case 2:
+					FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2500MA;
+					break;
+				case 3:
+					FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2850MA;
+					break;
+				case 4:
+					FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_3000MA;
+					break;
+				default:
+					FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2000MA;
+					break;
+			}
 		rc = SW_recharge(smbchg_dev);
 		if (rc < 0)
 			pr_err("%s: SW_recharge failed rc = %d\n", __func__,
 				rc);
-
 		break;
 	case JEITA_STATE_RANGE_100_to_500:
 		charging_enable = EN_BAT_CHG_EN_COMMAND_TRUE;
@@ -4031,8 +4078,33 @@ void asus_adapter_adc_work(struct work_struct *work)
 	case ASUS_200K:
 	case PB:
 	case OTHERS:
-		usb_max_current = ICL_2000mA;
-		break;
+		{
+			//setting max allowed current from adapter
+			switch (adapter_ceeling_current) {
+				case 0:
+					usb_max_current = ICL_2000mA;
+					break;
+				case 1:
+					usb_max_current = ICL_2050mA;
+					break;
+				case 2:
+					usb_max_current = ICL_2500mA;
+					break;
+				case 3:
+					usb_max_current = ICL_2850mA;
+					break;
+				case 4:
+					usb_max_current = ICL_3000mA;
+					break;
+				case 5:
+					usb_max_current = ICL_1000mA;
+					break;
+				default:
+					usb_max_current = ICL_2000mA;
+					break;
+	 			}
+			break;
+		}
 
 	case ADC_NOT_READY:
 		usb_max_current = ICL_1000mA;
