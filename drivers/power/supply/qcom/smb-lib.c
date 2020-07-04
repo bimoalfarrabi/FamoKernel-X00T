@@ -83,7 +83,7 @@ adapter_ceeling_current	:	ICL VALUE
 5						:	1000MA
 other					:	2000MA
 */
-static unsigned int adapter_ceeling_current = 3;
+static unsigned int adapter_ceeling_current = 4;
 module_param(adapter_ceeling_current, uint, S_IWUSR | S_IRUGO);
 
 extern struct smb_charger *smbchg_dev;
