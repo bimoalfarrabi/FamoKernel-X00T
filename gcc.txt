@@ -30,8 +30,8 @@ compile()
 	echo -e ${LGR} "######### Compiling kernel #########${NC}"
 	make -j$(nproc --all) O=out \
                       ARCH=${ARCH} \
-              CROSS_COMPILE="$HOME/android/toolchain/4.9/arm64/bin/aarch64-linux-android-" \
-			  CROSS_COMPILE_ARM32="$HOME/android/toolchain/4.9/arm32/bin/arm-linux-androideabi-"
+              CROSS_COMPILE="$HOME/android/toolchain/gcc/arm64/bin/aarch64-linux-elf-" \
+			  CROSS_COMPILE_ARM32="$HOME/android/toolchain/gcc/arm32/bin/arm-cortex-linux-gnueabi-"
 
 }
 
