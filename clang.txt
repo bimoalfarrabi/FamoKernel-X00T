@@ -9,11 +9,11 @@ ZIMAGE=$kernel_dir/out/arch/arm64/boot/Image.gz-dtb
 export ARCH=arm64
 export KBUILD_BUILD_USER=SyarifIbnu
 export KBUILD_BUILD_HOST=FamoKernel
-export LD_LIBRARY_PATH="$HOME/android/clang/bin/../lib:$PATH"
+export LD_LIBRARY_PATH="$HOME/android/toolchain/clang/bin/../lib:$PATH"
 # Compile plox
 function compile() {
     make -s -j$(nproc) O=out FamoX00T_defconfig
-    PATH="$HOME/android/clang/bin:${PATH}" \
+    PATH="$HOME/android/toolchain/clang/bin:${PATH}" \
     make -C $(pwd) -j$(nproc) O=out \
                    ARCH=arm64 \
                    CC=clang \
