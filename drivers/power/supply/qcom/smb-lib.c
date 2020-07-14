@@ -4259,24 +4259,6 @@ irqreturn_t smblib_handle_chg_state_change(int irq, void *data)
 	return IRQ_HANDLED;
 }
 
-irqreturn_t smblib_handle_batt_temp_changed(int irq, void *data)
-{
-	struct smb_irq_data *irq_data = data;
-	struct smb_charger *chg = irq_data->parent_data;
-	int rc;
-
-	rc = smblib_recover_from_soft_jeita(chg);
-	if (rc < 0) {
-		smblib_err(chg, "Couldn't recover chg from soft jeita rc=%d\n",
-				rc);
-		return IRQ_HANDLED;
-	}
-
-	rerun_election(chg->fcc_votable);
-	power_supply_changed(chg->batt_psy);
-	return IRQ_HANDLED;
-}
-
 irqreturn_t smblib_handle_batt_psy_changed(int irq, void *data)
 {
 	struct smb_irq_data *irq_data = data;
