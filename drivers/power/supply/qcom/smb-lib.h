@@ -324,7 +324,6 @@ struct smb_charger {
 	int			pd_active;
 	bool			system_suspend_supported;
 	int			boost_threshold_ua;
-	int			system_temp_level;
 	int			thermal_levels;
 	int			*thermal_mitigation;
 	int			dcp_icl_ua;
@@ -450,10 +449,6 @@ int smblib_get_prop_batt_charge_done(struct smb_charger *chg,
 				union power_supply_propval *val);
 int smblib_get_prop_batt_health(struct smb_charger *chg,
 				union power_supply_propval *val);
-int smblib_get_prop_system_temp_level(struct smb_charger *chg,
-				union power_supply_propval *val);
-int smblib_get_prop_input_current_limited(struct smb_charger *chg,
-				union power_supply_propval *val);
 int smblib_set_prop_input_suspend(struct smb_charger *chg,
 				const union power_supply_propval *val);
 #ifdef CONFIG_MACH_ASUS_X00T
@@ -462,11 +457,8 @@ int smblib_set_prop_charging_enabled(struct smb_charger *chg,
 #endif
 int smblib_set_prop_batt_capacity(struct smb_charger *chg,
 				const union power_supply_propval *val);
-int smblib_set_prop_system_temp_level(struct smb_charger *chg,
-				const union power_supply_propval *val);
 int smblib_set_prop_input_current_limited(struct smb_charger *chg,
 				const union power_supply_propval *val);
-
 int smblib_get_prop_dc_present(struct smb_charger *chg,
 				union power_supply_propval *val);
 int smblib_get_prop_dc_online(struct smb_charger *chg,
@@ -502,10 +494,6 @@ int smblib_get_prop_pd_in_hard_reset(struct smb_charger *chg,
 			       union power_supply_propval *val);
 int smblib_get_pe_start(struct smb_charger *chg,
 			       union power_supply_propval *val);
-int smblib_get_prop_charger_temp(struct smb_charger *chg,
-				union power_supply_propval *val);
-int smblib_get_prop_charger_temp_max(struct smb_charger *chg,
-				union power_supply_propval *val);
 int smblib_get_prop_die_health(struct smb_charger *chg,
 			       union power_supply_propval *val);
 int smblib_get_prop_charge_qnovo_enable(struct smb_charger *chg,

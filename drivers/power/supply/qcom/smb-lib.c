@@ -68,9 +68,9 @@ charge_mode	:	SMBCHG_FAST_CHG_CURRENT_VALUE
 2			:	2500MA
 3			:	2850MA
 4			:	3000MA
-other		:	2000MA
+other			:	2000MA
 */
-static unsigned int charge_mode = 3;
+static unsigned int charge_mode = 2;
 module_param(charge_mode, uint, S_IWUSR | S_IRUGO);
 
 /*
@@ -81,9 +81,9 @@ adapter_ceeling_current	:	ICL VALUE
 3						:	2850MA
 4						:	3000MA
 5						:	1000MA
-other					:	2000MA
+other						:	2000MA
 */
-static unsigned int adapter_ceeling_current = 4;
+static unsigned int adapter_ceeling_current = 3;
 module_param(adapter_ceeling_current, uint, S_IWUSR | S_IRUGO);
 
 extern struct smb_charger *smbchg_dev;
@@ -1926,33 +1926,6 @@ done:
 	return rc;
 }
 
-int smblib_get_prop_system_temp_level(struct smb_charger *chg,
-				union power_supply_propval *val)
-{
-	val->intval = chg->system_temp_level;
-	return 0;
-}
-
-int smblib_get_prop_input_current_limited(struct smb_charger *chg,
-				union power_supply_propval *val)
-{
-	u8 stat;
-	int rc;
-
-	if (chg->fake_input_current_limited >= 0) {
-		val->intval = chg->fake_input_current_limited;
-		return 0;
-	}
-
-	rc = smblib_read(chg, AICL_STATUS_REG, &stat);
-	if (rc < 0) {
-		smblib_err(chg, "Couldn't read AICL_STATUS rc=%d\n", rc);
-		return rc;
-	}
-	val->intval = (stat & SOFT_ILIMIT_BIT) || chg->is_hdc;
-	return 0;
-}
-
 int smblib_get_prop_batt_charge_done(struct smb_charger *chg,
 					union power_supply_propval *val)
 {
@@ -2064,33 +2037,6 @@ int smblib_set_prop_batt_capacity(struct smb_charger *chg,
 
 	power_supply_changed(chg->batt_psy);
 
-	return 0;
-}
-
-int smblib_set_prop_system_temp_level(struct smb_charger *chg,
-				const union power_supply_propval *val)
-{
-	if (val->intval < 0)
-		return -EINVAL;
-
-	if (chg->thermal_levels <= 0)
-		return -EINVAL;
-
-	if (val->intval > chg->thermal_levels)
-		return -EINVAL;
-
-	chg->system_temp_level = val->intval;
-
-	if (chg->system_temp_level == chg->thermal_levels)
-		return vote(chg->chg_disable_votable,
-			THERMAL_DAEMON_VOTER, true, 0);
-
-	vote(chg->chg_disable_votable, THERMAL_DAEMON_VOTER, false, 0);
-//	if (chg->system_temp_level == 0)
-		return vote(chg->usb_icl_votable, THERMAL_DAEMON_VOTER, false, 0);
-
-	vote(chg->fcc_votable, THERMAL_DAEMON_VOTER, true,
-			chg->thermal_mitigation[chg->system_temp_level]);
 	return 0;
 }
 
@@ -2447,40 +2393,6 @@ int smblib_get_prop_usb_current_now(struct smb_charger *chg,
 		return PTR_ERR(chg->iio.usbin_i_chan);
 
 	return iio_read_channel_processed(chg->iio.usbin_i_chan, &val->intval);
-}
-
-int smblib_get_prop_charger_temp(struct smb_charger *chg,
-				 union power_supply_propval *val)
-{
-	int rc;
-
-	if (!chg->iio.temp_chan ||
-		PTR_ERR(chg->iio.temp_chan) == -EPROBE_DEFER)
-		chg->iio.temp_chan = iio_channel_get(chg->dev, "charger_temp");
-
-	if (IS_ERR(chg->iio.temp_chan))
-		return PTR_ERR(chg->iio.temp_chan);
-
-	rc = iio_read_channel_processed(chg->iio.temp_chan, &val->intval);
-	val->intval /= 100;
-	return rc;
-}
-
-int smblib_get_prop_charger_temp_max(struct smb_charger *chg,
-				    union power_supply_propval *val)
-{
-	int rc;
-
-	if (!chg->iio.temp_max_chan ||
-		PTR_ERR(chg->iio.temp_max_chan) == -EPROBE_DEFER)
-		chg->iio.temp_max_chan = iio_channel_get(chg->dev,
-							 "charger_temp_max");
-	if (IS_ERR(chg->iio.temp_max_chan))
-		return PTR_ERR(chg->iio.temp_max_chan);
-
-	rc = iio_read_channel_processed(chg->iio.temp_max_chan, &val->intval);
-	val->intval /= 100;
-	return rc;
 }
 
 int smblib_get_prop_typec_cc_orientation(struct smb_charger *chg,

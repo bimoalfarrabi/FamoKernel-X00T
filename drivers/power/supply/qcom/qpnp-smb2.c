@@ -1008,12 +1008,6 @@ static int smb2_batt_get_prop(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CAPACITY:
 		rc = smblib_get_prop_batt_capacity(chg, val);
 		break;
-	case POWER_SUPPLY_PROP_SYSTEM_TEMP_LEVEL:
-		rc = smblib_get_prop_system_temp_level(chg, val);
-		break;
-	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMITED:
-		rc = smblib_get_prop_input_current_limited(chg, val);
-		break;
 	case POWER_SUPPLY_PROP_STEP_CHARGING_ENABLED:
 		val->intval = chg->step_chg_enabled;
 		break;
@@ -1106,9 +1100,6 @@ static int smb2_batt_set_prop(struct power_supply *psy,
 		rc = smblib_set_prop_charging_enabled(chg, val);
 		break;
 #endif
-	case POWER_SUPPLY_PROP_SYSTEM_TEMP_LEVEL:
-		rc = smblib_set_prop_system_temp_level(chg, val);
-		break;
 	case POWER_SUPPLY_PROP_CAPACITY:
 		rc = smblib_set_prop_batt_capacity(chg, val);
 		break;
