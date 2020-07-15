@@ -1906,6 +1906,7 @@ static int smb2_determine_initial_status(struct smb2 *chip)
 	smblib_handle_usb_source_change(0, &irq_data);
 	smblib_handle_chg_state_change(0, &irq_data);
 	smblib_handle_icl_change(0, &irq_data);
+	smblib_handle_batt_temp_changed(0, &irq_data);
 	smblib_handle_wdog_bark(0, &irq_data);
 
 	return 0;
@@ -1956,6 +1957,11 @@ static struct smb_irq_info smb2_irqs[] = {
 		.handler	= smblib_handle_debug,
 	},
 /* BATTERY IRQs */
+	[BATT_TEMP_IRQ] = {
+		.name		= "bat-temp",
+		.handler	= smblib_handle_batt_temp_changed,
+		.wake		= true,
+	},
 	[BATT_OCP_IRQ] = {
 		.name		= "bat-ocp",
 		.handler	= smblib_handle_batt_psy_changed,
