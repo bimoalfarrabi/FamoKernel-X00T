@@ -15,6 +15,8 @@ extern bool state_suspended;
 extern void state_suspend(void);
 extern void state_resume(void);
 extern void state_boost(void);
+extern bool true_gpu;
+extern bool first_boot_done;
 int state_register_client(struct notifier_block *nb);
 int state_unregister_client(struct notifier_block *nb);
 int state_notifier_call_chain(unsigned long val, void *v);
